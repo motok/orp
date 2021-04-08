@@ -1,0 +1,28 @@
+seqdiag {
+    edge_length = 160 # default: 192
+    span_height  = 20 # default: 40
+    default_fontsize = 16 # default: 11
+    activation = none
+    autonumber = True
+    default_note_color = skyblue
+
+    browser; resolver; orp_httpd; orp_dns; orp_checker;
+
+    browser -> orp_httpd [label="HTTP: Goボタン押下"]
+    browser <- orp_httpd [label="HTTP: redirect to nonce.orp"]
+
+    browser -> resolver  [label="DNS: nonce.orp ?"]
+    resolver -> orp_dns  [label="DNS: nonce.orp ?"]
+    orp_dns -> orp_checker   [label="check nonce.orp at resolver"]
+    resolver <- orp_dns  [label="DNS: nonce.orp=<IP>"]
+    browser <- resolver  [label="DNS: nonce.orp=<IP>"]
+
+    orp_checker -> resolver  [label="DNS: nonce.orp ?"]
+    orp_checker <- resolver  [label="DNS: Reject/Ignore/Response"]
+    browser -> orp_httpd [label="HTTP: nonce.orp\ntell me result"]
+    orp_httpd <- orp_checker [label="nonce.orp f/f/t"]
+    browser <- orp_httpd [label="resolver is open/not open"]
+
+
+
+}
